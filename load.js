@@ -697,7 +697,7 @@ for (var key in map) {
                 else if (temp < 40) viewT="from the right";
                 else viewT = "from the extreme right";
                 other.innerHTML+="<p>Your tend to view content "+viewT+". Your average accuracy is "+Math.round(totalQ/totalT*100/62)+"%.</p>";
-                other.innerHTML+='<canvas id="chart" width="400" height="400"></canvas>';
+                document.body.innerHTML+='<canvas id="chart" width="400" height="400"></canvas>';
                 var chart = new Chart(document.getElementById("chart"), {
                     type: 'bubble',
                     data: {
