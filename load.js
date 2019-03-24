@@ -115,7 +115,7 @@ var map = {
     "ABC":{  
         "quality":57,
         "bias":0,
-        
+
     },
     "AFP":{  
         "quality":62,
@@ -593,16 +593,21 @@ function rgbToHex(a) {
     return "#" + componentToHex(a.r) + componentToHex(a.g) + componentToHex(a.b);
 }
 chrome.storage.sync.get('data', function(data) {
-    var url = data.data.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1].replace("www.", "");
+    var url = data.data;
     name.innerHTML=url;
-    if (!(url in mapName)) {
+    if (!(url in map)) {
         document.body.innerHTML+='<p>No data could be found.</p>';
         return;
     }
-    url = mapName[url];
     name.innerHTML=url;
     var b = map[url]["bias"];
     var q = map[url]["quality"];
+    chrome.storage.sync.get('bias', function(data) {
+        b=data.bias;
+    });
+    chrome.storage.sync.get('quality', function(data) {
+        q=data.quality;
+    });
     var description = getBias(b)+" "+Math.round(Math.abs(b)*100/45+1)+"% of websites are less biased. "+getQuality(q)+" "+getFeedback(2*Math.abs(b)+(62-q));
     var colorBackground = getColor((b+50)/100, ',0.8)');
     colorBackground.r = Math.min(255, colorBackground.r+51);
