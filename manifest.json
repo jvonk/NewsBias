@@ -1,0 +1,17 @@
+{
+    "name": "Biased?",
+    "version": "1.0",
+    "manifest_version": 2,
+
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_icon": "icon.png"
+    },
+    "background": {
+      "scripts": ["popup.js", "Chart.js"],
+      "persistent": false
+    },
+    "permissions": [ 
+        "tabs", "storage"
+    ]
+}
