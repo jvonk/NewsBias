@@ -1,5 +1,5 @@
 # News Bias Detector
-1. Download as zip and unzip or clone the repository.
+1. Clone the repository or download as zip and unzip and rename folder to "NewsBias".
 2. Open "chrome://extensions"
 3. Enable developer mode (upper right hand corner)
 4. Click "Load Unpacked"
