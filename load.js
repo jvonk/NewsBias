@@ -621,7 +621,7 @@ chrome.storage.sync.get('datab', function(data) {
     var color = "#FFFFFF";
     if (value=='left') color = '#0000FF';
     if (value=='leftcenter') color = '#DDDDFF';
-    if (value=='center') color = '#DDDDDDD';
+    if (value=='center') color = '#EEEEEE';
     if (value=='rightcenter') color = '#FFDDDD';
     if (value=='right') color = '#FF0000';
     name.style.background=color;
@@ -672,71 +672,98 @@ for (var key in map) {
         if (biase=='LOW') {text+="The site is rarely factual. "; q=10;}
         if (text!="") other.innerHTML+='<p>'+text+'</p>';
     } else {
-        other.innerHTML+="<a target='_blank' href='https://mediabiasfactcheck.com/submit-source'>This site is not in our database. Click to add</a>"
+        other.innerHTML+="<a target='_blank' href='https://mediabiasfactcheck.com/submit-source'>This site is not in the database.<br>Click to add.</a>"
         return;
     }
-    document.body.innerHTML+='<canvas id="chart" width="400" height="400"></canvas>';
-    var chart = new Chart(document.getElementById("chart"), {
-        type: 'bubble',
-        data: {
-            labels: labelArray,
-            datasets: [{
-                backgroundColor: colors,
-                borderColor: colors,
-                label: 'Others',
-                data: dataArray
-            },
-            {
-                label: 'Current',
-                backgroundColor: getColorForPercentage((b+50)/100, ',0.8)'),
-                borderColor: getColorForPercentage((b+50)/100,',0.8)'),
-                data: [{
-                    x: Math.round(b*95/44),
-                    y: Math.round(q*100/62),
-                    r: 20
-                }]
-            }],
-            backgroundColor: "#FF9966"
-        },
-        options: {
-            scales: {
-                xAxes: [{              
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Bias'
+    var totalT = 1;
+    var totalB = 1.0;
+    var totalQ = 1.0;
+    chrome.storage.sync.get('total', function(data) {
+        totalT = data.total;
+        console.log(totalT);
+        chrome.storage.sync.get('totalBias', function(data) {
+            totalB= data.totalBias;
+            console.log(totalB);
+            chrome.storage.sync.get('totalQuality', function(data) {
+                totalQ = data.totalQuality;
+                console.log(totalQ);
+                document.body.innerHTML+='<canvas id="chart" width="400" height="400"></canvas>';
+                var chart = new Chart(document.getElementById("chart"), {
+                    type: 'bubble',
+                    data: {
+                        labels: labelArray,
+                        datasets: [{
+                            backgroundColor: colors,
+                            borderColor: colors,
+                            label: 'Others',
+                            data: dataArray
+                        },
+                        {
+                            label: 'Current',
+                            backgroundColor: getColorForPercentage((b+50)/100, ',0.8)'),
+                            borderColor: getColorForPercentage((b+50)/100,',0.8)'),
+                            data: [{
+                                x: Math.round(b*95/44),
+                                y: Math.round(q*100/62),
+                                r: 30
+                            }]
+                        },{
+                            label: 'Average',
+                            backgroundColor: getColorForPercentage((totalB/totalT+50)/100, ',0.8)'),
+                            borderColor: getColorForPercentage((totalB/totalT+50)/100,',0.8)'),
+                            data: [{
+                                x: Math.round(totalB/totalT*95/44),
+                                y: Math.round(totalQ/totalT*100/62),
+                                r: 20
+                            }]
+                        }],
+                        backgroundColor: "#FF9966"
                     },
-                    type: 'linear',
-                    position: 'bottom'
-                }],
-                yAxes: [{              
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Quality'
-                    },
-                    type: 'linear',
-                    position: 'left'
-                }],
-            },
-            tooltips: {
-               callbacks: {
-                  label: function(tooltipItem, data) {
-                     var label = data.labels[tooltipItem.index];
-                     if (tooltipItem.datasetIndex>0) {
-                         label = url;
-                     }
-                     return label + ': Bias ' + tooltipItem.xLabel + ' Quality ' + tooltipItem.yLabel;
-                  }
-                }
-            }
-        }
+                    options: {
+                        scales: {
+                            xAxes: [{              
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Bias'
+                                },
+                                type: 'linear',
+                                position: 'bottom'
+                            }],
+                            yAxes: [{              
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Quality'
+                                },
+                                type: 'linear',
+                                position: 'left'
+                            }],
+                        },
+                        tooltips: {
+                           callbacks: {
+                              label: function(tooltipItem, data) {
+                                 var label = data.labels[tooltipItem.index];
+                                 if (tooltipItem.datasetIndex==1) {
+                                    label = url;
+                                 } else if (tooltipItem.datasetIndex==2){
+                                    label = "Average";
+                                 }
+                                 return label + ': Bias ' + tooltipItem.xLabel + ' Accuracy ' + tooltipItem.yLabel;
+                              }
+                            }
+                        }
+                    }
+                });
+                document.getElementById("chart").onclick = function(evt){
+                    var activePoints = chart.getElementsAtEvent(evt);
+                    var point = activePoints[0];
+                    if (point._index==0) return;
+                    var beta = Object.keys(map)[point._index];
+                    var gamma = "https://www."+inverted[beta];
+                    chrome.tabs.create({ url: gamma });
+                };            
+            });
+        });
     });
-    document.getElementById("chart").onclick = function(evt){
-        var activePoints = chart.getElementsAtEvent(evt);
-        var point = activePoints[0];
-        if (point._index==0) return;
-        var beta = Object.keys(map)[point._index];
-        var gamma = "https://www."+inverted[beta];
-        chrome.tabs.create({ url: gamma });
-    };
+    
 });
 

@@ -571,6 +571,15 @@ function getUrl() {
                     chrome.browserAction.setIcon({path: "icon3.png"});
                     return;
                 }
+                chrome.storage.sync.get('total', function(data) {
+                    chrome.storage.sync.set({'total':(data.total==undefined?0:data.total)+1});
+                });
+                chrome.storage.sync.get('totalBias', function(data) {
+                    chrome.storage.sync.set({'totalBias':(data.totalBias==undefined?0:data.totalBias)+b});
+                });
+                chrome.storage.sync.get('totalQuality', function(data) {
+                    chrome.storage.sync.set({'totalQuality':(data.totalQuality==undefined?0:data.totalQuality)+q});
+                });
                 if (q<30||Math.abs(b)>40) chrome.browserAction.setIcon({path: "icon2.png"});
                 else chrome.browserAction.setIcon({path: "icon.png"});
             });            
