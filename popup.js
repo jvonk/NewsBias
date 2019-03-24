@@ -534,17 +534,12 @@ function getUrl() {
     chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT},
         function(tabs){
             var url = tabs[0].url;
-            chrome.storage.sync.set({ 'data' : url });
             url = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1].replace("www.", "");
-            chrome.storage.sync.set({ 'data' : url });
+            chrome.storage.sync.set({ 'datab' : url });
             if (url in mapName) {
                 url = mapName[url];
-                chrome.storage.sync.set({ 'data' : url });
-                var b = map[url]["bias"];
-                var q = map[url]["quality"];
-                chrome.storage.sync.set({'bias': b});
-                chrome.storage.sync.set({'quality': q});
             }
+            chrome.storage.sync.set({ 'data' : url });
         }
     );
 }
