@@ -687,7 +687,17 @@ for (var key in map) {
             chrome.storage.sync.get('totalQuality', function(data) {
                 totalQ = data.totalQuality;
                 console.log(totalQ);
-                document.body.innerHTML+='<canvas id="chart" width="400" height="400"></canvas>';
+                var viewT = "";
+                var temp = Math.round(totalB/totalT*94/44);
+                if (temp <= -40) viewT="extreme left";
+                else if (temp <= -15) viewT="left";
+                else if (temp < -5) viewT="left leaning";
+                else if (temp <= 5) viewT="balanced";
+                else if (temp < 15) viewT="right leaning";
+                else if (temp < 40) viewT="right";
+                else viewT = "extreme right";
+                other.innerHTML+="<p>Your tend to view "+viewT+" content. Your average accuray is "+Math.round(totalQ/totalT*100/62)+"%.</p>";
+                other.innerHTML+='<canvas id="chart" width="400" height="400"></canvas>';
                 var chart = new Chart(document.getElementById("chart"), {
                     type: 'bubble',
                     data: {
