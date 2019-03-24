@@ -6,6 +6,6 @@
 5. Choose folder
 6. Enjoy!
 
-. Shows bias of current site
-. Shows other sites bias
-. Shows average bias of your visited sited
+* Shows bias of current site
+* Shows other sites bias
+* Shows average bias of your visited sited
