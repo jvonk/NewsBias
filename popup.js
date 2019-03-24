@@ -534,23 +534,17 @@ function getUrl() {
     chrome.tabs.query({'active': true, 'windowId': chrome.windows.WINDOW_ID_CURRENT},
         function(tabs){
             var url = tabs[0].url;
-            url = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1].replace("www.", "");
-            url = mapName[url];
             chrome.storage.sync.set({ 'data' : url });
-            var b = map[url]["bias"];
-            var q = map[url]["quality"];
-            chrome.storage.sync.set({'bias': b});
-            chrome.storage.sync.set({'quality': q});
-            var bT = 0;
-            var qT = 0;
-            chrome.storage.sync.get('biasT', function(data) {
-                if (data.bias!=undefined)bT=data.bias;
-            });
-            chrome.storage.sync.get('qualityT', function(data) {
-                if (data.quality!=undefined)qT=data.quality;
-            });
-            chrome.storage.sync.set({'biasT': bT+b});
-            chrome.storage.sync.set({'qualityT': qT+q});
+            url = url.match(/^[\w-]+:\/{2,}\[?([\w\.:-]+)\]?(?::[0-9]*)?/)[1].replace("www.", "");
+            chrome.storage.sync.set({ 'data' : url });
+            if (url in mapName) {
+                url = mapName[url];
+                chrome.storage.sync.set({ 'data' : url });
+                var b = map[url]["bias"];
+                var q = map[url]["quality"];
+                chrome.storage.sync.set({'bias': b});
+                chrome.storage.sync.set({'quality': q});
+            }
         }
     );
 }

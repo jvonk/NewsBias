@@ -111,6 +111,14 @@ var mapName = {
     "worldtruth.tv": "WorldTruth.Tv"
     
 }
+function swap(json){
+    var ret = {};
+    for(var key in json){
+      ret[json[key]] = key;
+    }
+    return ret;
+  }
+  var inverted = swap(mapName);
 var map = {  
     "ABC":{  
         "quality":57,
@@ -633,7 +641,7 @@ chrome.storage.sync.get('data', function(data) {
         var color = getColorForPercentage((data["bias"]+50)/100, ',0.4)');
         colors.push(color);
     }
-    new Chart(document.getElementById("chart"), {
+    var chart = new Chart(document.getElementById("chart"), {
         type: 'bubble',
         data: {
             labels: labelArray,
@@ -687,4 +695,12 @@ chrome.storage.sync.get('data', function(data) {
             }
         }
     });
+    document.getElementById("chart").onclick = function(evt){
+        var activePoints = chart.getElementsAtEvent(evt);
+        var point = activePoints[0];
+        if (point._index==0) return;
+        var beta = Object.keys(map)[point._index+1];
+        var gamma = "https://www."+inverted[beta];
+        chrome.tabs.create({ url: gamma });
+    };
 });
