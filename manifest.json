@@ -8,10 +8,10 @@
         "default_icon": "icon.png"
     },
     "background": {
-      "scripts": ["popup.js", "Chart.js"],
+      "scripts": ["popup.js", "Chart.js", "getPageMetas.js"],
       "persistent": false
     },
     "permissions": [ 
-        "tabs", "storage"
+        "tabs", "storage", "http://*/*", "https://*/*", "activeTab"
     ]
 }
